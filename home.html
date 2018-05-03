@@ -1,0 +1,39 @@
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+var app = angular.module("myApp",[]);
+var reportController = 
+app.controller("myCont",function($scope,$http)
+{
+	$scope.getOutput 		= function(inputtedvalue)
+							{
+								
+								$http({
+									method: "GET",
+									url:"http://localhost:5000/submit/"+inputtedvalue
+								})
+								.then(function(response)
+								{
+									console.log(response.data[0]);
+									$scope.showDataReceived	= true;
+									$scope.DataReceived = response.data;
+								}).catch(function(error)
+								{
+									$scope.showDataReceived	= false;									
+									console.log(error);
+								});
+							}
+});
+</script>
+<body ng-app="myApp" ng-controller="myCont">				
+<input type="text" ng-model="input_value"/>
+<button action='submit' ng-click="getOutput(input_value)">submit</button>
+<div ng-show="showDataReceived">
+Hello...Received input from the service........<br>
+{{DataReceived}}
+</div>
+<div ng-hide="showDataReceived!=false">
+Sorry...Error occurred........
+</div>
+</body>
+</html>
