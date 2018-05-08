@@ -1,22 +1,88 @@
 <html>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="angular.min.js"></script>
+<style>
+.Data-Div span{
+color: white;
+position: absolute;
+}
+.heading img{
+width: 200px;
+margin-top: 10px;
+}
+.teamContent{
+left:10px;
+background: rgba(199, 33, 33, 0.6);
+padding: 30px;
+border-radius: 50px;
+}
+.content{
+width: 		600px;
+margin: 	0px auto;
+background:	#fafafa;
+margin-top:	30px;
+padding:	10px;
+}
+
+.formClassContent{
+margin:10px auto 10px;
+width:275px;
+}
+input[type="text"] {
+margin-right:15px;
+width: 300px;
+height: 32px;
+border-radius: 5px;
+    border: 1px solid #ccc;
+padding-left:5px;
+outline:none;
+}
+table {
+width:100%;
+margin-bottom: 25px;
+}
+td {
+    text-align: center;
+	padding-top:10px;
+}
+h3{
+padding-left:10px;
+}
+input[type="submit"] {
+    border: none;
+    padding: 7px 15px;
+    border-radius: 10px;
+	cursor: pointer;
+	width:250px;
+	margin: 0 auto;
+	margin-left: 10%;
+	outline: none;
+}
+input[type="submit"]:hover{
+    background-color: dc2126 !important;
+}
+</style>
 <script>
 var app = angular.module("myApp",[]);
 var reportController = 
 app.controller("myCont",function($scope,$http)
 {
 	$scope.getOutput 		= function(inputtedvalue)
-							{
-								
+							{								
 								$http({
 									method: "GET",
 									url:"http://localhost:5000/submit/"+inputtedvalue
+									/*method: "POST",
+									url:"http://localhost:5000/submit/",
+									data: {inputValue: inputtedvalue}*/
 								})
 								.then(function(response)
 								{
-									console.log(response.data[0]);
+									console.log(response.data);
 									$scope.showDataReceived	= true;
-									$scope.DataReceived = response.data;
+									$scope.tableData = response.data.queryResult.parameters;
+									$scope.isArray = angular.isArray;
+									console.log("Table data is:");
+									console.log($scope.tableData);
 								}).catch(function(error)
 								{
 									$scope.showDataReceived	= false;									
@@ -25,15 +91,44 @@ app.controller("myCont",function($scope,$http)
 							}
 });
 </script>
-<body ng-app="myApp" ng-controller="myCont">				
-<input type="text" ng-model="input_value"/>
-<button action='submit' ng-click="getOutput(input_value)">submit</button>
+<body ng-app="myApp" ng-controller="myCont" background="Images/BackgroungImage.jpg" style="background-position: 100%">
+<div class="heading" style="text-align: center;">
+	<img src="Images/TechgigLogo.png" alt="logo">
+</div>
+<div class="Data-Div">
+	<span style="right:10px"> <img src="Images/ShopperStopLogo.png" alt="logo"> </span>
+	<span class="teamContent">
+		<h2 style="margin-top: 12px;line-height: 0px;">Team : Gathaks</h2>
+		&emsp;&ensp;&ensp;Anudeep<br>
+		&emsp;&ensp;&ensp;Krishna Kanth<br>
+		&emsp;&ensp;&ensp;Pavan Kumar
+	</span>	
+</div>
+<div class="content">
+<form ng-submit="getOutput(input_value)" class="formClassContent">
+	<input type="text" ng-model="input_value" required="true"/><br><br>
+	<input type='submit' value="GO" style="color: white; background-color: #5870a7;">
+</form>
 <div ng-show="showDataReceived">
-Hello...Received input from the service........<br>
-{{DataReceived}}
+	<h3>Data received is as below:</h3>
+	<table>
+		<thead>
+			<th>Table Keys</th>
+			<th>Table Values</th>
+		</thead>
+		<tbody ng-repeat="(key, value) in tableData">
+			<td>{{key}}</td>
+			<td ng-if="isArray(value)">
+				<span ng-repeat="values in value"><span ng-if="$index!=0">, </span>{{values}}</span></td>
+			<td ng-if="!isArray(value)">
+				<span ng-if="value!=''">{{value}}</span><span ng-if="value==''">Not Applicable</span>
+			</td>
+		</tbody>
+	</table>
 </div>
 <div ng-hide="showDataReceived!=false">
-Sorry...Error occurred........
+Sorry...Either no data received from Service or Internal error occurred.
+</div>
 </div>
 </body>
 </html>
