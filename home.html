@@ -79,7 +79,7 @@ app.controller("myCont",function($scope,$http)
 								{
 									console.log(response.data);
 									$scope.showDataReceived	= true;
-									$scope.tableData = response.data.queryResult.parameters;
+									$scope.tableData = response.data.result.parameters;
 									$scope.isArray = angular.isArray;
 									console.log("Table data is:");
 									console.log($scope.tableData);
@@ -119,15 +119,17 @@ app.controller("myCont",function($scope,$http)
 		<tbody ng-repeat="(key, value) in tableData">
 			<td>{{key}}</td>
 			<td ng-if="isArray(value)">
+				<span ng-if="value.length==0">NA</span>
 				<span ng-repeat="values in value"><span ng-if="$index!=0">, </span>{{values}}</span></td>
 			<td ng-if="!isArray(value)">
-				<span ng-if="value!=''">{{value}}</span><span ng-if="value==''">Not Applicable</span>
+				<span ng-if="value!=''">{{value}}</span><span ng-if="value==''">NA</span>
 			</td>
 		</tbody>
 	</table>
 </div>
 <div ng-hide="showDataReceived!=false">
 Sorry...Either no data received from Service or Internal error occurred.
+{{showDataReceived}}
 </div>
 </div>
 </body>
